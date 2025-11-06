@@ -46,7 +46,8 @@ jobs:
 
     - name: Execute Interior Design Agent Initializer
       run: |
-        python src/app/agents/interiorDesignAgent_initializer.py
+        cd src  
+        python app/agents/interiorDesignAgent_initializer.py
 
     - name: Clean up .env file
       if: always()

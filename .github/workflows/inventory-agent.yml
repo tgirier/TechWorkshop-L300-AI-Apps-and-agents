@@ -46,7 +46,8 @@ jobs:
 
     - name: Execute Inventory Agent Initializer
       run: |
-        python src/app/agents/inventoryAgent_initializer.py
+        cd src
+        python app/agents/inventoryAgent_initializer.py
 
     - name: Clean up .env file
       if: always()
