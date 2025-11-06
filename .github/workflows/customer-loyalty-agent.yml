@@ -43,8 +43,20 @@ jobs:
 
     - name: Create .env file from secret
       run: |
-        echo "${{ secrets.ENV }}" > src/.env
+        cat > src/.env << 'EOF'
+        ${{ secrets.ENV }}
+        EOF
       shell: bash
+
+    - name: Verify .env file exists
+      run: |
+        if [ -f src/.env ]; then
+          echo ".env file created successfully"
+          echo "File size: $(wc -c < src/.env) bytes"
+        else
+          echo "ERROR: .env file was not created"
+          exit 1
+        fi
 
     - name: Execute Customer Loyalty Agent Initializer
       run: |
