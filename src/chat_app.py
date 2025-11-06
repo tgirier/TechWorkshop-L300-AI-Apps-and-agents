@@ -63,6 +63,7 @@ os.environ["AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"] = "true"
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
+
 # Timing utility function with structured logging
 def log_timing(operation_name: str, start_time: float, additional_info: str = ""):
     """Log timing information for operations using structured logging."""
