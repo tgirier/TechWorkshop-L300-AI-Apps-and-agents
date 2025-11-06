@@ -41,19 +41,17 @@ jobs:
 
     - name: Create .env file from secret
       run: |
-        cd src
-        echo "${{ secrets.ENV }}" > .env
+        echo "${{ secrets.ENV }}" > src/.env
+      shell: bash
 
     - name: Execute Shopper Agent Initializer
       run: |
-        cd src
-        python app/agents/shopperAgent_initializer.py
+        python src/app/agents/shopperAgent_initializer.py
 
     - name: Clean up .env file
       if: always()
       run: |
-        cd src
-        rm -f .env
+        rm -f src/.env
 
     - name: Azure Logout
       if: always()
