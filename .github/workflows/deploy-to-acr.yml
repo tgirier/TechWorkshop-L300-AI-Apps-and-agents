@@ -1,0 +1,49 @@
+name: Deploy to Azure Container Registry
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+
+env:
+  REGISTRY_NAME: kbpghsrgwd7e2cosureg  # Replace with your ACR name (without .azurecr.io)
+  IMAGE_NAME: chat-app
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Container Registry Login
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Create .env file from secret
+        run: |
+          echo "${{ secrets.ENV }}" > src/.env
+        shell: bash
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+                       -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest \
+                       ./src
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+
+      - name: Clean up .env file
+        if: always()
+        run: |
+          rm -f src/.env
